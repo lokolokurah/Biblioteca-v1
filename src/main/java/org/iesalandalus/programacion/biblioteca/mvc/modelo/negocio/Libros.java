@@ -1,135 +1,76 @@
 package org.iesalandalus.programacion.biblioteca.mvc.modelo.negocio;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+
 import javax.naming.OperationNotSupportedException;
 
+import org.iesalandalus.programacion.biblioteca.mvc.modelo.dominio.Alumno;
 import org.iesalandalus.programacion.biblioteca.mvc.modelo.dominio.Libro;
 
 public class Libros {
+	
+	private List<Libro> coleccionLibros;
 
-	private int capacidad;
-	private int tamano;
-	private Libro[] coleccionLibros;
-
-	public Libros(int capacidad)
+	public Libros()
 	{
-		if (capacidad<=0)
-		{
-			throw new IllegalArgumentException("ERROR: La capacidad debe ser mayor que cero.");
-		}
-		this.capacidad = capacidad;
-		coleccionLibros = new Libro[capacidad];
-		tamano = 0;
+		coleccionLibros = new ArrayList();
+	}
+	
+	public List<Libro> get() {
+		List<Libro> librosOrdenados = copiaProfundaLibros();
+		librosOrdenados.sort(Comparator.comparing(Libro::getTitulo).thenComparing(Libro::getAutor));
+		return librosOrdenados;
 	}
 
-	public Libro[] get() {
-		return copiaProfundaLibros();
-	}
-
-	private Libro[] copiaProfundaLibros()
+	private List<Libro> copiaProfundaLibros()
 	{
-		Libro[] copiaLibros = new Libro[capacidad];
-		for (int i=0; !tamanoSuperado(i); ++i)
-		{
-			copiaLibros[i] = new Libro(coleccionLibros[i]);
+		List<Libro> copiaLibros = new ArrayList();
+		for (Libro libro : coleccionLibros) {
+			copiaLibros.add(new Libro(libro));
 		}
 		return copiaLibros;
 	}
 
 	public int getTamano() {
-		return tamano;
+		return coleccionLibros.size();
 	}
-
-	public int getCapacidad() {
-		return capacidad;
-	}
-
+	
 	public void insertar(Libro libro) throws OperationNotSupportedException {
-		if (libro == null) 
-		{
+		if (libro == null) {
 			throw new NullPointerException("ERROR: No se puede insertar un libro nulo.");
 		}
-		int indice = buscarIndice(libro);
-		if (capacidadSuperada(indice)) 
-		{
-			throw new OperationNotSupportedException("ERROR: No se aceptan más libros.");
-		} 
-		if (tamanoSuperado(indice)) 
-		{
-			coleccionLibros[indice] = new Libro(libro);
-			tamano++;
-		} 
-		else 
-		{
+		int indice = coleccionLibros.indexOf(libro);
+		if (indice == -1) {
+			coleccionLibros.add(libro);
+		} else {
 			throw new OperationNotSupportedException("ERROR: Ya existe un libro con ese título y autor.");
-		}		
-
-	}
-
-	private int buscarIndice(Libro libro) {
-		int indice = 0;
-		boolean libroEncontrado = false;
-		while (!tamanoSuperado(indice) && !libroEncontrado)
-		{
-			if (coleccionLibros[indice].equals(libro)) 
-			{
-				libroEncontrado = true;
-			} 
-			else 
-			{
-				indice++;
-			}
 		}
-		return indice;
-	}
-
-	private boolean tamanoSuperado(int indice) {
-		return indice >= tamano;
-	}
-
-	private boolean capacidadSuperada(int indice) {
-		return indice >= capacidad;
 	}
 
 	public Libro buscar(Libro libro) {
-		if (libro == null) 
-		{
+		if (libro == null) {
 			throw new IllegalArgumentException("ERROR: No se puede buscar un libro nulo.");
 		}
-		int indice = buscarIndice(libro);
-		if (tamanoSuperado(indice)) 
-		{
+		int indice = coleccionLibros.indexOf(libro);
+		if (indice == -1) {
 			return null;
-		}
-		else 
-		{
-			return new Libro(coleccionLibros[indice]);
-		}
+		} else {
+			return new Libro(coleccionLibros.get(indice));
+		}	
 	}
 
 	public void borrar(Libro libro) throws OperationNotSupportedException {
-		if (libro == null) 
-		{
+		if (libro == null) {
 			throw new IllegalArgumentException("ERROR: No se puede borrar un libro nulo.");
 		}
-		int indice = buscarIndice(libro);
-		if (tamanoSuperado(indice)) 
-		{
+		int indice = coleccionLibros.indexOf(libro);
+		if (indice == -1) {
 			throw new OperationNotSupportedException("ERROR: No existe ningún libro con ese título y autor.");
-		} 
-		else 
-		{
-			desplazarUnaPosicionHaciaIzquierda(indice);
+		} else {
+			coleccionLibros.remove(libro);
 		}
-	}
-
-	private void desplazarUnaPosicionHaciaIzquierda(int indice) {
-		int i;
-		for (i = indice; !tamanoSuperado(i); ++i) 
-		{
-			coleccionLibros[i] = coleccionLibros[i+1];
-		}
-		coleccionLibros[i] = null;
-		tamano--;
 	}
 	
 }
