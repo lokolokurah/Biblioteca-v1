@@ -1,135 +1,75 @@
 package org.iesalandalus.programacion.biblioteca.mvc.modelo.negocio;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+
 import javax.naming.OperationNotSupportedException;
 
 import org.iesalandalus.programacion.biblioteca.mvc.modelo.dominio.Alumno;
 
 public class Alumnos {
 
-	private int capacidad;
-	private int tamano;
-	private Alumno[] coleccionAlumnos;
+	private List<Alumno> coleccionAlumnos;
 
-	public Alumnos(int capacidad)
+	public Alumnos()
 	{
-		if (capacidad<=0)
-		{
-			throw new IllegalArgumentException("ERROR: La capacidad debe ser mayor que cero.");
-		}
-		this.capacidad = capacidad;
-		coleccionAlumnos = new Alumno[capacidad];
-		tamano = 0;
+		coleccionAlumnos = new ArrayList();
 	}
 
-	public Alumno[] get() {
-		return copiaProfundaAlumnos();
+	public List<Alumno> get() {
+		List<Alumno> alumnosOrdenados = copiaProfundaAlumnos();
+		alumnosOrdenados.sort(Comparator.comparing(Alumno::getCorreo));
+		return alumnosOrdenados;
 	}
 
-	private Alumno[] copiaProfundaAlumnos()
+	private List<Alumno> copiaProfundaAlumnos()
 	{
-		Alumno[] copiaAlumnos = new Alumno[capacidad];
-		for (int i=0; !tamanoSuperado(i); ++i)
-		{
-			copiaAlumnos[i] = new Alumno(coleccionAlumnos[i]);
+		List<Alumno> copiaAlumnos = new ArrayList();
+		for (Alumno alumno : coleccionAlumnos) {
+			copiaAlumnos.add(new Alumno(alumno));
 		}
 		return copiaAlumnos;
 	}
 
 	public int getTamano() {
-		return tamano;
-	}
-
-	public int getCapacidad() {
-		return capacidad;
+		return coleccionAlumnos.size();
 	}
 
 	public void insertar(Alumno alumno) throws OperationNotSupportedException {
-		if (alumno == null) 
-		{
+		if (alumno == null) {
 			throw new NullPointerException("ERROR: No se puede insertar un alumno nulo.");
 		}
-		int indice = buscarIndice(alumno);
-		if (capacidadSuperada(indice)) 
-		{
-			throw new OperationNotSupportedException("ERROR: No se aceptan más alumnos.");
-		} 
-		if (tamanoSuperado(indice)) 
-		{
-			coleccionAlumnos[indice] = new Alumno(alumno);
-			tamano++;
-		} 
-		else 
-		{
+		int indice = coleccionAlumnos.indexOf(alumno);
+		if (indice == -1) {
+			coleccionAlumnos.add(new Alumno(alumno));
+		} else {
 			throw new OperationNotSupportedException("ERROR: Ya existe un alumno con ese correo.");
-		}		
-
-	}
-
-	private int buscarIndice(Alumno alumno) {
-		int indice = 0;
-		boolean alumnoEncontrado = false;
-		while (!tamanoSuperado(indice) && !alumnoEncontrado)
-		{
-			if (coleccionAlumnos[indice].equals(alumno)) 
-			{
-				alumnoEncontrado = true;
-			} 
-			else 
-			{
-				indice++;
-			}
-		}
-		return indice;
-	}
-
-	private boolean tamanoSuperado(int indice) {
-		return indice >= tamano;
-	}
-
-	private boolean capacidadSuperada(int indice) {
-		return indice >= capacidad;
+		}	
 	}
 
 	public Alumno buscar(Alumno alumno) {
-		if (alumno == null) 
-		{
+		if (alumno == null) {
 			throw new IllegalArgumentException("ERROR: No se puede buscar un alumno nulo.");
 		}
-		int indice = buscarIndice(alumno);
-		if (tamanoSuperado(indice)) 
-		{
+		int indice = coleccionAlumnos.indexOf(alumno);
+		if (indice == -1) {
 			return null;
-		}
-		else 
-		{
-			return new Alumno(coleccionAlumnos[indice]);
+		} else {
+			return new Alumno(coleccionAlumnos.get(indice));
 		}
 	}
 
 	public void borrar(Alumno alumno) throws OperationNotSupportedException {
-		if (alumno == null) 
-		{
+		if (alumno == null) {
 			throw new IllegalArgumentException("ERROR: No se puede borrar un alumno nulo.");
 		}
-		int indice = buscarIndice(alumno);
-		if (tamanoSuperado(indice)) 
-		{
+		int indice = coleccionAlumnos.indexOf(alumno);
+		if (indice == -1) {
 			throw new OperationNotSupportedException("ERROR: No existe ningún alumno con ese correo.");
-		} 
-		else 
-		{
-			desplazarUnaPosicionHaciaIzquierda(indice);
+		} else {
+			coleccionAlumnos.remove(alumno);
 		}
-	}
-
-	private void desplazarUnaPosicionHaciaIzquierda(int indice) {
-		int i;
-		for (i = indice; !tamanoSuperado(i); ++i) 
-		{
-			coleccionAlumnos[i] = coleccionAlumnos[i+1];
-		}
-		coleccionAlumnos[i] = null;
-		tamano--;
 	}
 
 }
