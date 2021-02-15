@@ -19,7 +19,7 @@ public class Alumnos {
 
 	public List<Alumno> get() {
 		List<Alumno> alumnosOrdenados = copiaProfundaAlumnos();
-		alumnosOrdenados.sort(Comparator.comparing(Alumno::getCorreo));
+		alumnosOrdenados.sort(Comparator.comparing(Alumno::getNombre));
 		return alumnosOrdenados;
 	}
 

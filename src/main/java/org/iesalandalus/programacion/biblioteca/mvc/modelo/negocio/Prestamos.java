@@ -2,225 +2,170 @@ package org.iesalandalus.programacion.biblioteca.mvc.modelo.negocio;
 
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 
 import javax.naming.OperationNotSupportedException;
 
 import org.iesalandalus.programacion.biblioteca.mvc.modelo.dominio.Alumno;
+import org.iesalandalus.programacion.biblioteca.mvc.modelo.dominio.Curso;
 import org.iesalandalus.programacion.biblioteca.mvc.modelo.dominio.Libro;
 import org.iesalandalus.programacion.biblioteca.mvc.modelo.dominio.Prestamo;
 
 public class Prestamos {
 
-	private int capacidad;
-	private int tamano;
-	private Prestamo[] coleccionPrestamos;
+	private List<Prestamo> coleccionPrestamos;
 
-	public Prestamos(int capacidad)
+	public Prestamos()
 	{
-		if (capacidad<=0)
-		{
-			throw new IllegalArgumentException("ERROR: La capacidad debe ser mayor que cero.");
-		}
-		this.capacidad = capacidad;
-		coleccionPrestamos = new Prestamo[capacidad];
-		tamano = 0;
+		coleccionPrestamos = new ArrayList<>();
 	}
 
-	public Prestamo[] get() {
-		return copiaProfundaPrestamos();
+	public List<Prestamo> get() {
+		List<Prestamo> prestamosOrdenados = copiaProfundaPrestamos();
+		Comparator<Alumno> comparadorAlumno = Comparator.comparing(Alumno::getCorreo);
+		Comparator<Libro> comparadorLibro = Comparator.comparing(Libro::getTitulo).thenComparing(Libro::getAutor);
+		prestamosOrdenados.sort(Comparator.comparing(Prestamo::getFechaPrestamo).thenComparing(Prestamo::getAlumno, comparadorAlumno).thenComparing(Prestamo::getLibro, comparadorLibro));
+		return prestamosOrdenados;
 	}
 
-	private Prestamo[] copiaProfundaPrestamos()
+	private List<Prestamo> copiaProfundaPrestamos()
 	{
-		Prestamo[] copiaPrestamos = new Prestamo[capacidad];
-		for (int i=0; !tamanoSuperado(i); ++i)
-		{
-			copiaPrestamos[i] = new Prestamo(coleccionPrestamos[i]);
+		List<Prestamo> copiaPrestamos = new ArrayList();
+		for (Prestamo prestamo : coleccionPrestamos) {
+			copiaPrestamos.add(new Prestamo(prestamo));
 		}
 		return copiaPrestamos;
 	}
 
-	public Prestamo[] get(Alumno alumno)
+	public int getTamano() {
+		return coleccionPrestamos.size();
+	}
+	
+	public List<Prestamo> get(Alumno alumno)
 	{
-		if (alumno==null)
-		{
+		if (alumno==null) {
 			throw new NullPointerException("ERROR: El alumno no puede ser nulo.");
 		}
-		Prestamo[] prestamosAlumno = new Prestamo[capacidad];
-		int j = 0;
-		for (int i=0; !tamanoSuperado(i); ++i)
-		{
-			if (coleccionPrestamos[i].getAlumno().equals(alumno))
-			{
-				prestamosAlumno[j++] = new Prestamo(coleccionPrestamos[i]);
+		List<Prestamo> prestamosAlumno = new ArrayList();
+		for (Prestamo prestamo : coleccionPrestamos) {
+			if (prestamo.getAlumno().equals(alumno)) {
+				prestamosAlumno.add(new Prestamo(prestamo));
 			}
 		}
+		Comparator<Alumno> comparadorAlumno = Comparator.comparing(Alumno::getCorreo);
+		Comparator<Libro> comparadorLibro = Comparator.comparing(Libro::getTitulo).thenComparing(Libro::getAutor);
+		prestamosAlumno.sort(Comparator.comparing(Prestamo::getFechaPrestamo).thenComparing(Prestamo::getAlumno, comparadorAlumno).thenComparing(Prestamo::getLibro, comparadorLibro));
 		return prestamosAlumno;
 	}
 
-	public Prestamo[] get(Libro libro)
+	public List<Prestamo> get(Libro libro)
 	{
-		if (libro==null)
-		{
+		if (libro==null) {
 			throw new NullPointerException("ERROR: El libro no puede ser nulo.");
 		}
-		Prestamo[] prestamosLibro = new Prestamo[capacidad];
-		int j = 0;
-		for (int i=0; !tamanoSuperado(i); ++i)
-		{
-			if (coleccionPrestamos[i].getLibro().equals(libro))
-			{
-				prestamosLibro[j++] = new Prestamo(coleccionPrestamos[i]);
+		List<Prestamo> prestamosLibro = new ArrayList();
+		for (Prestamo prestamo : coleccionPrestamos) {
+			if (prestamo.getLibro().equals(libro)) {
+				prestamosLibro.add(new Prestamo(prestamo));
 			}
 		}
+		Comparator<Alumno> comparadorAlumno = Comparator.comparing(Alumno::getCorreo);
+		Comparator<Libro> comparadorLibro = Comparator.comparing(Libro::getTitulo).thenComparing(Libro::getAutor);
+		prestamosLibro.sort(Comparator.comparing(Prestamo::getFechaPrestamo).thenComparing(Prestamo::getAlumno, comparadorAlumno).thenComparing(Prestamo::getLibro, comparadorLibro));
 		return prestamosLibro;
 	}
 
-	public Prestamo[] get(LocalDate fechaPrestamo)
+	public List<Prestamo> get(LocalDate fechaPrestamo)
 	{
-		if (fechaPrestamo==null)
-		{
+		if (fechaPrestamo==null) {
 			throw new NullPointerException("ERROR: La fecha no puede ser nula.");
 		}
-		Prestamo[] prestamosFecha = new Prestamo[capacidad];
-		int j = 0;
-		for (int i=0; !tamanoSuperado(i); ++i)
-		{
-			if (mismoMes(coleccionPrestamos[i].getFechaPrestamo(), fechaPrestamo))
-			{
-				prestamosFecha[j++] = new Prestamo(coleccionPrestamos[i]);
+		List<Prestamo> prestamosFecha = new ArrayList();
+		for (Prestamo prestamo : coleccionPrestamos) {
+			if (mismoMes(prestamo.getFechaPrestamo(), fechaPrestamo)) {
+				prestamosFecha.add(new Prestamo(prestamo));
 			}
 		}
+		Comparator<Alumno> comparadorAlumno = Comparator.comparing(Alumno::getCorreo);
+		Comparator<Libro> comparadorLibro = Comparator.comparing(Libro::getTitulo).thenComparing(Libro::getAutor);
+		prestamosFecha.sort(Comparator.comparing(Prestamo::getFechaPrestamo).thenComparing(Comparator.comparing(Prestamo::getAlumno, comparadorAlumno).thenComparing(Prestamo::getLibro, comparadorLibro)));
 		return prestamosFecha;
 	}
 
+	public Map<Curso, Integer> getEstadisticaMensualPorCurso(LocalDate fecha)
+	{
+		return null;
+	}
+	
+	private Map<Curso, Integer> inicializarEstadisticas()
+	{
+		return null;
+	}
+	
 	private boolean mismoMes(LocalDate fechaInicial, LocalDate fechaFinal)
 	{
 		boolean fecha = false;
 		Month mes = fechaInicial.getMonth();
 		int anio = fechaInicial.getYear();
-		if (mes.equals(fechaFinal.getMonth()) && anio==fechaFinal.getYear())
-		{
+		if (mes.equals(fechaFinal.getMonth()) && anio==fechaFinal.getYear()) {
 			fecha = true;
 		}
 		return fecha;
 	}
 
-	public int getTamano() {
-		return tamano;
-	}
-
-	public int getCapacidad() {
-		return capacidad;
-	}
-
 	public void prestar(Prestamo prestamo) throws OperationNotSupportedException
 	{
-		if (prestamo == null) 
-		{
+		if (prestamo == null) {
 			throw new NullPointerException("ERROR: No se puede prestar un préstamo nulo.");
 		}
-		int indice = buscarIndice(prestamo);
-		if (capacidadSuperada(indice)) 
-		{
-			throw new OperationNotSupportedException("ERROR: No se aceptan más préstamos.");
-		} 
-		if (tamanoSuperado(indice)) 
-		{
-			coleccionPrestamos[indice] = new Prestamo(prestamo);
-			tamano++;
-		} 
-		else 
-		{
+		int indice = coleccionPrestamos.indexOf(prestamo);
+		if (indice == -1) {
+			coleccionPrestamos.add(prestamo);
+		} else {
 			throw new OperationNotSupportedException("ERROR: Ya existe un préstamo igual.");
-		}	
+		}
 	}
 
 	public void devolver(Prestamo prestamo, LocalDate fechaDevolucion) throws OperationNotSupportedException {
-		if (prestamo == null) 
-		{
+		if (prestamo == null) {
 			throw new NullPointerException("ERROR: No se puede devolver un préstamo nulo.");
 		}
-		if (fechaDevolucion==null)
-		{
+		if (fechaDevolucion==null) {
 			throw new NullPointerException("ERROR: La fecha no puede ser nula.");
 		}
-		int indice = buscarIndice(prestamo);
-		if (tamanoSuperado(indice)) 
-		{
+		int indice = coleccionPrestamos.indexOf(prestamo);
+		if (indice == -1) {
 			throw new OperationNotSupportedException("ERROR: No existe ningún préstamo igual.");
-		} 
-		else 
-		{
-			coleccionPrestamos[indice].devolver(fechaDevolucion);
-		}		
-	}
-
-	private int buscarIndice(Prestamo prestamo) {
-		int indice = 0;
-		boolean prestamoEncontrado = false;
-		while (!tamanoSuperado(indice) && !prestamoEncontrado)
-		{
-			if (coleccionPrestamos[indice].equals(prestamo)) 
-			{
-				prestamoEncontrado = true;
-			} 
-			else 
-			{
-				indice++;
-			}
-		}
-		return indice;
-	}
-
-	private boolean tamanoSuperado(int indice) {
-		return indice >= tamano;
-	}
-
-	private boolean capacidadSuperada(int indice) {
-		return indice >= capacidad;
+		} else {
+			coleccionPrestamos.get(indice).devolver(fechaDevolucion);
+		}	
 	}
 
 	public Prestamo buscar(Prestamo prestamo) {
-		if (prestamo == null) 
-		{
+		if (prestamo == null) {
 			throw new IllegalArgumentException("ERROR: No se puede buscar un préstamo nulo.");
 		}
-		int indice = buscarIndice(prestamo);
-		if (tamanoSuperado(indice)) 
-		{
+		int indice = coleccionPrestamos.indexOf(prestamo);
+		if (indice == -1) {
 			return null;
-		}
-		else 
-		{
-			return new Prestamo(coleccionPrestamos[indice]);
+		} else {
+			return new Prestamo(coleccionPrestamos.get(indice));
 		}
 	}
 
 	public void borrar(Prestamo prestamo) throws OperationNotSupportedException {
-		if (prestamo == null) 
-		{
+		if (prestamo == null) {
 			throw new IllegalArgumentException("ERROR: No se puede borrar un préstamo nulo.");
 		}
-		int indice = buscarIndice(prestamo);
-		if (tamanoSuperado(indice)) 
-		{
+		int indice = coleccionPrestamos.indexOf(prestamo);
+		if (indice == -1) {
 			throw new OperationNotSupportedException("ERROR: No existe ningún préstamo igual.");
-		} 
-		else 
-		{
-			desplazarUnaPosicionHaciaIzquierda(indice);
+		} else {
+			coleccionPrestamos.remove(prestamo);
 		}
-	}
-
-	private void desplazarUnaPosicionHaciaIzquierda(int indice) {
-		int i;
-		for (i = indice; !tamanoSuperado(i); ++i) 
-		{
-			coleccionPrestamos[i] = coleccionPrestamos[i+1];
-		}
-		coleccionPrestamos[i] = null;
-		tamano--;
 	}
 
 }
