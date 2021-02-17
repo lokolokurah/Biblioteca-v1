@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
@@ -18,8 +19,7 @@ public class Prestamos {
 
 	private List<Prestamo> coleccionPrestamos;
 
-	public Prestamos()
-	{
+	public Prestamos() {
 		coleccionPrestamos = new ArrayList<>();
 	}
 
@@ -31,8 +31,7 @@ public class Prestamos {
 		return prestamosOrdenados;
 	}
 
-	private List<Prestamo> copiaProfundaPrestamos()
-	{
+	private List<Prestamo> copiaProfundaPrestamos() {
 		List<Prestamo> copiaPrestamos = new ArrayList();
 		for (Prestamo prestamo : coleccionPrestamos) {
 			copiaPrestamos.add(new Prestamo(prestamo));
@@ -43,9 +42,8 @@ public class Prestamos {
 	public int getTamano() {
 		return coleccionPrestamos.size();
 	}
-	
-	public List<Prestamo> get(Alumno alumno)
-	{
+
+	public List<Prestamo> get(Alumno alumno) {
 		if (alumno==null) {
 			throw new NullPointerException("ERROR: El alumno no puede ser nulo.");
 		}
@@ -61,8 +59,7 @@ public class Prestamos {
 		return prestamosAlumno;
 	}
 
-	public List<Prestamo> get(Libro libro)
-	{
+	public List<Prestamo> get(Libro libro) {
 		if (libro==null) {
 			throw new NullPointerException("ERROR: El libro no puede ser nulo.");
 		}
@@ -78,8 +75,7 @@ public class Prestamos {
 		return prestamosLibro;
 	}
 
-	public List<Prestamo> get(LocalDate fechaPrestamo)
-	{
+	public List<Prestamo> get(LocalDate fechaPrestamo) {
 		if (fechaPrestamo==null) {
 			throw new NullPointerException("ERROR: La fecha no puede ser nula.");
 		}
@@ -95,18 +91,25 @@ public class Prestamos {
 		return prestamosFecha;
 	}
 
-	public Map<Curso, Integer> getEstadisticaMensualPorCurso(LocalDate fecha)
-	{
-		return null;
+	public Map<Curso, Integer> getEstadisticaMensualPorCurso(LocalDate fecha) {
+		Map<Curso, Integer>estadisticasMensualesPorCurso = inicializarEstadisticas();
+		List<Prestamo> prestamosMensuales = get(fecha);
+		for (Prestamo prestamo : prestamosMensuales) {
+			Curso cursoAlumno = prestamo.getAlumno().getCurso();
+			estadisticasMensualesPorCurso.put(cursoAlumno, estadisticasMensualesPorCurso.get(cursoAlumno) + prestamo.getPuntos());
+		}
+		return estadisticasMensualesPorCurso;
 	}
-	
-	private Map<Curso, Integer> inicializarEstadisticas()
-	{
-		return null;
+
+	private Map<Curso, Integer> inicializarEstadisticas() {
+		Map<Curso, Integer>map = new EnumMap<>(Curso.class);
+		for (Curso curso : Curso.values()) {
+			map.put(curso, 0);
+		}
+		return map;
 	}
-	
-	private boolean mismoMes(LocalDate fechaInicial, LocalDate fechaFinal)
-	{
+
+	private boolean mismoMes(LocalDate fechaInicial, LocalDate fechaFinal) {
 		boolean fecha = false;
 		Month mes = fechaInicial.getMonth();
 		int anio = fechaInicial.getYear();
@@ -116,8 +119,7 @@ public class Prestamos {
 		return fecha;
 	}
 
-	public void prestar(Prestamo prestamo) throws OperationNotSupportedException
-	{
+	public void prestar(Prestamo prestamo) throws OperationNotSupportedException {
 		if (prestamo == null) {
 			throw new NullPointerException("ERROR: No se puede prestar un préstamo nulo.");
 		}
