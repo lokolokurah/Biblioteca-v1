@@ -14,7 +14,7 @@ public class Alumnos {
 
 	public Alumnos()
 	{
-		coleccionAlumnos = new ArrayList();
+		coleccionAlumnos = new ArrayList<>();
 	}
 
 	public List<Alumno> get() {
@@ -25,7 +25,7 @@ public class Alumnos {
 
 	private List<Alumno> copiaProfundaAlumnos()
 	{
-		List<Alumno> copiaAlumnos = new ArrayList();
+		List<Alumno> copiaAlumnos = new ArrayList<>();
 		for (Alumno alumno : coleccionAlumnos) {
 			copiaAlumnos.add(new Alumno(alumno));
 		}

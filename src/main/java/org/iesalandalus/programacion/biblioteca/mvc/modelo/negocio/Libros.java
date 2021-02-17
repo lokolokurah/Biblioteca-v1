@@ -6,7 +6,6 @@ import java.util.List;
 
 import javax.naming.OperationNotSupportedException;
 
-import org.iesalandalus.programacion.biblioteca.mvc.modelo.dominio.Alumno;
 import org.iesalandalus.programacion.biblioteca.mvc.modelo.dominio.Libro;
 
 public class Libros {
@@ -15,7 +14,7 @@ public class Libros {
 
 	public Libros()
 	{
-		coleccionLibros = new ArrayList();
+		coleccionLibros = new ArrayList<>();
 	}
 	
 	public List<Libro> get() {
@@ -26,7 +25,7 @@ public class Libros {
 
 	private List<Libro> copiaProfundaLibros()
 	{
-		List<Libro> copiaLibros = new ArrayList();
+		List<Libro> copiaLibros = new ArrayList<>();
 		for (Libro libro : coleccionLibros) {
 			copiaLibros.add(new Libro(libro));
 		}

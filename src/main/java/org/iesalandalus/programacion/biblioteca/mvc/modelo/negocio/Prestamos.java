@@ -25,14 +25,14 @@ public class Prestamos {
 
 	public List<Prestamo> get() {
 		List<Prestamo> prestamosOrdenados = copiaProfundaPrestamos();
-		Comparator<Alumno> comparadorAlumno = Comparator.comparing(Alumno::getCorreo);
+		Comparator<Alumno> comparadorAlumno = Comparator.comparing(Alumno::getNombre);
 		Comparator<Libro> comparadorLibro = Comparator.comparing(Libro::getTitulo).thenComparing(Libro::getAutor);
 		prestamosOrdenados.sort(Comparator.comparing(Prestamo::getFechaPrestamo).thenComparing(Prestamo::getAlumno, comparadorAlumno).thenComparing(Prestamo::getLibro, comparadorLibro));
 		return prestamosOrdenados;
 	}
 
 	private List<Prestamo> copiaProfundaPrestamos() {
-		List<Prestamo> copiaPrestamos = new ArrayList();
+		List<Prestamo> copiaPrestamos = new ArrayList<>();
 		for (Prestamo prestamo : coleccionPrestamos) {
 			copiaPrestamos.add(new Prestamo(prestamo));
 		}
@@ -47,13 +47,13 @@ public class Prestamos {
 		if (alumno==null) {
 			throw new NullPointerException("ERROR: El alumno no puede ser nulo.");
 		}
-		List<Prestamo> prestamosAlumno = new ArrayList();
+		List<Prestamo> prestamosAlumno = new ArrayList<>();
 		for (Prestamo prestamo : coleccionPrestamos) {
 			if (prestamo.getAlumno().equals(alumno)) {
 				prestamosAlumno.add(new Prestamo(prestamo));
 			}
 		}
-		Comparator<Alumno> comparadorAlumno = Comparator.comparing(Alumno::getCorreo);
+		Comparator<Alumno> comparadorAlumno = Comparator.comparing(Alumno::getNombre);
 		Comparator<Libro> comparadorLibro = Comparator.comparing(Libro::getTitulo).thenComparing(Libro::getAutor);
 		prestamosAlumno.sort(Comparator.comparing(Prestamo::getFechaPrestamo).thenComparing(Prestamo::getAlumno, comparadorAlumno).thenComparing(Prestamo::getLibro, comparadorLibro));
 		return prestamosAlumno;
@@ -63,13 +63,13 @@ public class Prestamos {
 		if (libro==null) {
 			throw new NullPointerException("ERROR: El libro no puede ser nulo.");
 		}
-		List<Prestamo> prestamosLibro = new ArrayList();
+		List<Prestamo> prestamosLibro = new ArrayList<>();
 		for (Prestamo prestamo : coleccionPrestamos) {
 			if (prestamo.getLibro().equals(libro)) {
 				prestamosLibro.add(new Prestamo(prestamo));
 			}
 		}
-		Comparator<Alumno> comparadorAlumno = Comparator.comparing(Alumno::getCorreo);
+		Comparator<Alumno> comparadorAlumno = Comparator.comparing(Alumno::getNombre);
 		Comparator<Libro> comparadorLibro = Comparator.comparing(Libro::getTitulo).thenComparing(Libro::getAutor);
 		prestamosLibro.sort(Comparator.comparing(Prestamo::getFechaPrestamo).thenComparing(Prestamo::getAlumno, comparadorAlumno).thenComparing(Prestamo::getLibro, comparadorLibro));
 		return prestamosLibro;
@@ -79,13 +79,13 @@ public class Prestamos {
 		if (fechaPrestamo==null) {
 			throw new NullPointerException("ERROR: La fecha no puede ser nula.");
 		}
-		List<Prestamo> prestamosFecha = new ArrayList();
+		List<Prestamo> prestamosFecha = new ArrayList<>();
 		for (Prestamo prestamo : coleccionPrestamos) {
 			if (mismoMes(prestamo.getFechaPrestamo(), fechaPrestamo)) {
 				prestamosFecha.add(new Prestamo(prestamo));
 			}
 		}
-		Comparator<Alumno> comparadorAlumno = Comparator.comparing(Alumno::getCorreo);
+		Comparator<Alumno> comparadorAlumno = Comparator.comparing(Alumno::getNombre);
 		Comparator<Libro> comparadorLibro = Comparator.comparing(Libro::getTitulo).thenComparing(Libro::getAutor);
 		prestamosFecha.sort(Comparator.comparing(Prestamo::getFechaPrestamo).thenComparing(Comparator.comparing(Prestamo::getAlumno, comparadorAlumno).thenComparing(Prestamo::getLibro, comparadorLibro)));
 		return prestamosFecha;
