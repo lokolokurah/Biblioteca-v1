@@ -82,6 +82,11 @@ public enum Opcion {
 			vista.listarPrestamosFecha();
 		}
 	},
+	MOSTRAR_ESTADISTICA_MENSUAL_POR_CURSO("Listar estadistica mensual por curso") {
+		public void ejecutar() {
+			vista.mostrarEstadisticaMensualPorCurso();
+		}
+	},
 	SALIR("Salir") {
 		public void ejecutar() {
 			vista.terminar();

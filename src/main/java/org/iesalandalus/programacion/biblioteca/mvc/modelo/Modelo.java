@@ -1,6 +1,9 @@
 package org.iesalandalus.programacion.biblioteca.mvc.modelo;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import javax.naming.OperationNotSupportedException;
 
@@ -10,18 +13,18 @@ import org.iesalandalus.programacion.biblioteca.mvc.modelo.dominio.Libro;
 import org.iesalandalus.programacion.biblioteca.mvc.modelo.negocio.Alumnos;
 import org.iesalandalus.programacion.biblioteca.mvc.modelo.negocio.Prestamos;
 import org.iesalandalus.programacion.biblioteca.mvc.modelo.negocio.Libros;
+import org.iesalandalus.programacion.biblioteca.mvc.modelo.dominio.Curso;
 
 public class Modelo {
-
-	private static final int CAPACIDAD = 100;
+	
 	private Alumnos alumnos;
 	private Prestamos prestamos;
 	private Libros libros;
 
 	public Modelo() {
-		alumnos = new Alumnos(CAPACIDAD);
-		prestamos = new Prestamos(CAPACIDAD);
-		libros = new Libros(CAPACIDAD);
+		alumnos = new Alumnos();
+		prestamos = new Prestamos();
+		libros = new Libros();
 	}
 
 	public void insertar(Alumno alumno) throws OperationNotSupportedException {
@@ -80,10 +83,18 @@ public class Modelo {
 	}
 
 	public void borrar(Alumno alumno) throws OperationNotSupportedException {
+		List<Prestamo> prestamosAlumno = prestamos.get(alumno);
+		for (Prestamo prestamo : prestamosAlumno) {
+			prestamos.borrar(prestamo);
+		}
 		alumnos.borrar(alumno);
 	}
 
 	public void borrar(Libro libro) throws OperationNotSupportedException {
+		List<Prestamo> prestamosLibro = prestamos.get(libro);
+		for (Prestamo prestamo : prestamosLibro) {
+			prestamos.borrar(prestamo);
+		}
 		libros.borrar(libro);
 	}
 
@@ -91,28 +102,32 @@ public class Modelo {
 		prestamos.borrar(prestamo);
 	}
 
-	public Alumno[] getAlumnos() {
+	public List<Alumno> getAlumnos() {
 		return alumnos.get();
 	}
 
-	public Libro[] getLibros() {
+	public List<Libro> getLibros() {
 		return libros.get();
 	}
 
-	public Prestamo[] getPrestamos() {
+	public List<Prestamo> getPrestamos() {
 		return prestamos.get();
 	}
 
-	public Prestamo[] getPrestamos(Alumno alumno) {
+	public List<Prestamo> getPrestamos(Alumno alumno) {
 		return prestamos.get(alumno);
 	}
 
-	public Prestamo[] getPrestamos(Libro libro) {
+	public List<Prestamo> getPrestamos(Libro libro) {
 		return prestamos.get(libro);
 	}
 
-	public Prestamo[] getPrestamos(LocalDate fechaPrestamo) {
+	public List<Prestamo> getPrestamos(LocalDate fechaPrestamo) {
 		return prestamos.get(fechaPrestamo);
+	}
+	
+	public Map<Curso, Integer> getEstadisticaMensualPorCurso(LocalDate fecha) {
+		return prestamos.getEstadisticaMensualPorCurso(fecha);
 	}
 
 }

@@ -1,11 +1,14 @@
 package org.iesalandalus.programacion.biblioteca.mvc.controlador;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
 
 import javax.naming.OperationNotSupportedException;
 
 import org.iesalandalus.programacion.biblioteca.mvc.modelo.Modelo;
 import org.iesalandalus.programacion.biblioteca.mvc.modelo.dominio.Alumno;
+import org.iesalandalus.programacion.biblioteca.mvc.modelo.dominio.Curso;
 import org.iesalandalus.programacion.biblioteca.mvc.modelo.dominio.Libro;
 import org.iesalandalus.programacion.biblioteca.mvc.modelo.dominio.Prestamo;
 import org.iesalandalus.programacion.biblioteca.mvc.vista.Vista;
@@ -75,28 +78,31 @@ public class Controlador {
 		modelo.borrar(prestamo);
 	}
 
-	public Alumno[] getAlumnos() {
+	public List<Alumno> getAlumnos() {
 		return modelo.getAlumnos();
 	}
 
-	public Libro[] getLibros() {
+	public List<Libro> getLibros() {
 		return modelo.getLibros();
 	}
 
-	public Prestamo[] getPrestamos() {
+	public List<Prestamo> getPrestamos() {
 		return modelo.getPrestamos();
 	}
 
-	public Prestamo[] getPrestamos(Alumno alumno) {
+	public List<Prestamo> getPrestamos(Alumno alumno) {
 		return modelo.getPrestamos(alumno);
 	}
 
-	public Prestamo[] getPrestamos(Libro libro) {
+	public List<Prestamo> getPrestamos(Libro libro) {
 		return modelo.getPrestamos(libro);
 	}
 
-	public Prestamo[] getPrestamos(LocalDate fechaPrestamo) {
+	public List<Prestamo> getPrestamos(LocalDate fechaPrestamo) {
 		return modelo.getPrestamos(fechaPrestamo);
 	}
 
+	public Map<Curso, Integer> getEstadisticaMensualPorCurso(LocalDate fecha) {
+		return modelo.getEstadisticaMensualPorCurso(fecha);
+	}
 }
